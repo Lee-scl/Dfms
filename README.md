@@ -1,8 +1,8 @@
 ## 简介
-pfms，中文名称：私人文件管理系统，它是基于 [EasyFS](https://gitee.com/whvse/easy-fs) 二次升级改造，
+Dfms，中文名称：私人文件管理系统，它是基于 [pfms](https://github.com/ecode1024/pfms) 二次升级改造，
 改造后更方便灵活、文件以及文件夹的管理、定时分享文件，
 轻量级文件服务器，支持缩略图，下载支持中文名，不依赖其它容器，可独立部署，
-使用Java语言、SpringBoot框架、Thymeleaf模板引擎、Layer前端、Java内存缓存开发.
+使用Java语言、SpringBoot框架、Thymeleaf模板引擎、Layer前端、Java内存缓存开发,部分文本文件支持markdown语法.
 
 ## 平台支持
 1. Windows
@@ -25,7 +25,7 @@ pfms，中文名称：私人文件管理系统，它是基于 [EasyFS](https://g
 配置文件中以下两个参数标识管理员账号和密码：
 > admin.uname=root  
   admin.pwd=123  
-  
+
 PS: 如果是图片、音频、视频、pdf、网页、文本类型的文件会在浏览器直接打开，其他类型弹出下载框。
 
 ## 服务器参数配置
