@@ -9,12 +9,10 @@
 </head>
 <body bgcolor="#CCFFCC">
 <div id="layout">
-    <header>
-        <h1 th:text="${title}">只读模式</h1>
-    </header>
     <div class="btns">
-        <button id="watch-btn">Enable watch</button>
-        <button id="unwatch-btn">Disable watch</button>
+        <button><h1 th:text="${title}">只读模式</h1></button>
+        <button id="watch-btn" style="background-color: lightyellow">Enable watch</button>
+        <button id="unwatch-btn"style="background-color: lightyellow">Disable watch</button>
     </div>
     <div id="test-editormd" class="editormd-onlyread">
                 <textarea id="content" style="display:none;" th:text="${content}">#### Setting

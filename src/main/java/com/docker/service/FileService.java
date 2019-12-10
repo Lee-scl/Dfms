@@ -4,12 +4,15 @@ import com.docker.constant.FileTypeEnum;
 import com.docker.entity.FileInfo;
 import com.docker.tasks.FileTree;
 import com.docker.util.CacheUtil;
+import com.docker.util.FileIOUtil;
 import com.docker.util.FileTypeUtil;
+import net.coobird.thumbnailator.Thumbnails;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -87,7 +90,7 @@ public class FileService {
                         if (FileTypeUtil.canEdit(new Tika( ).detect(new File(f.getAbsolutePath( ))))) {
                             eflag = true;
                             pflag = true;
-                        }else if (FileTypeUtil.canOnlinePreview(new Tika( ).detect(new File(f.getAbsolutePath( ))))) {
+                        } else if (FileTypeUtil.canOnlinePreview(new Tika( ).detect(new File(f.getAbsolutePath( ))))) {
                             pflag = true;
                         }
                         m.put("editable", eflag);
@@ -122,7 +125,7 @@ public class FileService {
                     }
 
                     // 获取文件图标
-                    m.put("type", getFileType(suffix, contentType));
+                    m.put("type", FileTypeUtil.getFileType(suffix, contentType));
                     // 是否有缩略图
                     String smUrl = "sm/" + (dir.isEmpty( ) ? dir : (dir + SLASH)) + f.getFileName( );
                     if (new File(fileDir + smUrl).exists( )) {
@@ -144,7 +147,7 @@ public class FileService {
 
                 long l1 = (long) o1.get("updateTime");
                 long l2 = (long) o2.get("updateTime");
-                return  l1>l2?1:-1;
+                return l1 > l2 ? 1 : -1;
             }
         });
         // 把文件夹排在前面
@@ -194,25 +197,6 @@ public class FileService {
             }
             file.transferTo(outFile);
             Map rs = getRS(200, "上传成功", path);
-//            //生成缩略图
-//            if (useSm != null && useSm) {
-//                // 获取文件类型
-//                String contentType = null;
-//                try {
-//                    contentType = new Tika( ).detect(outFile);
-//                } catch (IOException e) {
-//                    e.printStackTrace( );
-//                }
-//                if (contentType != null && contentType.startsWith("image/")) {
-//                    File smImg = new File(fileDir + "sm/" + path);
-//                    if (!smImg.getParentFile( ).exists( )) {
-//                        smImg.getParentFile( ).mkdirs( );
-//                    }
-//                    Thumbnails.of(outFile).scale(1f).outputQuality(0.25f).toFile(smImg);
-//                    rs.put("smUrl", "sm/" + path);
-//                }
-//            }
-
             //更新树
             FileTree.fileInfo.add(path);
             return rs;
@@ -236,6 +220,9 @@ public class FileService {
         if (oldFile.startsWith("//")) {
             oldFile = oldFile.substring(1);
             newFile = newFile.substring(1);
+        } else if (!oldFile.startsWith("/")) {
+            oldFile = "/" + oldFile;
+            newFile = "/" + newFile;
         }
 
         System.out.println("oldFile:" + oldFile + "\nnewFile:" + newFile);
@@ -307,14 +294,32 @@ public class FileService {
         FDirNorm( );
         if (!StringUtils.isEmpty(curPos) && !StringUtils.isEmpty(dirName)) {
             curPos = curPos.substring(1);
-            String dirPath = fileDir + curPos + SLASH + dirName;
+            String dirPath = "";
+            if (!curPos.equals("")) {
+                dirPath = fileDir + curPos + SLASH + dirName;
+            } else {
+                dirPath = fileDir + curPos + dirName;
+            }
             File f = new File(dirPath);
             if (f.exists( )) {
                 return getRS(500, "目录已存在");
             }
-            if (!f.exists( ) && f.mkdir( )) {
-                FileTree.fileInfo.add(SLASH + dirName);
-                return getRS(200, "创建成功");
+            if (dirName.split("\\.").length == 1) {
+                if (!f.exists( ) && f.mkdir( )) {
+
+                    FileTree.fileInfo.add(SLASH + curPos + SLASH + dirName);
+                    return getRS(200, "创建成功");
+                }
+            } else if (dirName.split("\\.").length == 2) {
+                try {
+
+                    if (!f.exists( ) && f.createNewFile( )) {
+                        FileTree.fileInfo.add(SLASH + curPos + SLASH + dirName);
+                        return getRS(200, "创建成功");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace( );
+                }
             }
         }
         return getRS(500, "创建失败");
@@ -388,7 +393,7 @@ public class FileService {
                     }
                     // 获取文件图标、文件名、图片文件缩略图片地址、过期时间
                     modelMap.put("sid", sid);
-                    modelMap.put("type", getFileType(suffix, contentType));
+                    modelMap.put("type", FileTypeUtil.getFileType(suffix, contentType));
                     modelMap.put("exists", true);
                     modelMap.put("fileName", url.substring(url.lastIndexOf('/') + 1));
                     // 是否有缩略图
@@ -463,12 +468,18 @@ public class FileService {
 
         System.out.println("getFile............" + p);
         FDirNorm( );
-        outputFile(fileDir + p, download, response);
+        FileIOUtil.outputFile(fileDir + p, download, response);
         return null;
     }
 
 
-
+    /**
+     * 获取文本文件内容
+     *
+     * @param file
+     * @param download
+     * @return
+     */
     public String fileContent(String file, boolean download) {
         // 判断文件是否存在
         File inFile = new File(file);
@@ -494,11 +505,11 @@ public class FileService {
                 String s = "";
                 br = new BufferedReader(new FileReader(inFile));
 
-                    while ((s=br.readLine()) != null){
-                        content+=s+"\n";
-                    }
+                while ((s = br.readLine( )) != null) {
+                    content += s + "\n";
+                }
 //                System.out.println(content );
-                return  content;
+                return content;
             } catch (FileNotFoundException e) {
                 e.printStackTrace( );
             } catch (IOException e) {
@@ -513,78 +524,6 @@ public class FileService {
 
         }
         return null;
-    }
-
-    /**
-     * 输出文件流
-     *
-     * @param file
-     * @param download 是否下载
-     * @param response
-     */
-    private void outputFile(String file, boolean download, HttpServletResponse response) {
-        // 判断文件是否存在
-        File inFile = new File(file);
-        // 文件不存在
-        if (!inFile.exists( )) {
-            PrintWriter writer = null;
-            try {
-                response.setContentType("text/html;charset=UTF-8");
-                writer = response.getWriter( );
-                writer.write("<!doctype html><title>404 Not Found</title><link rel=\"shorcut icon\" href=\"assets/images/logo.png\"><h1 style=\"text-align: center\">404 Not Found</h1><hr/><p style=\"text-align: center\">FMS Server</p>");
-                writer.flush( );
-            } catch (IOException e) {
-                e.printStackTrace( );
-            }
-            return;
-        }
-        // 获取文件类型
-        String contentType = null;
-        try {
-            contentType = new Tika( ).detect(inFile);
-        } catch (IOException e) {
-            e.printStackTrace( );
-        }
-        // 图片、文本文件,则在线查看
-//        log.info("文件类型：" + contentType);
-        if (FileTypeUtil.canOnlinePreview(contentType) && !download) {
-            response.setContentType(contentType);
-            response.setCharacterEncoding("UTF-8");
-        } else {
-            // 其他文件,强制下载
-            response.setContentType("application/force-download");
-            String newName;
-            try {
-                newName = URLEncoder.encode(inFile.getName( ), "utf-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace( );
-                newName = inFile.getName( );
-            }
-            response.setHeader("Content-Disposition", "attachment;fileName=" + newName);
-        }
-        // 输出文件流
-        OutputStream os = null;
-        FileInputStream is = null;
-        try {
-            is = new FileInputStream(inFile);
-            os = response.getOutputStream( );
-            byte[] bytes = new byte[1024];
-            int len;
-            while ((len = is.read(bytes)) != -1) {
-                os.write(bytes, 0, len);
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace( );
-        } catch (IOException e) {
-            e.printStackTrace( );
-        } finally {
-            try {
-                is.close( );
-                os.close( );
-            } catch (IOException e) {
-                e.printStackTrace( );
-            }
-        }
     }
 
 
@@ -615,42 +554,6 @@ public class FileService {
         return file.delete( );
     }
 
-    /**
-     * 获取文件类型
-     *
-     * @param suffix
-     * @param contentType
-     * @return
-     */
-    private String getFileType(String suffix, String contentType) {
-        String type;
-        if (FileTypeEnum.PPT.getName( ).equalsIgnoreCase(suffix) || FileTypeEnum.PPTX.getName( ).equalsIgnoreCase(suffix)) {
-            type = FileTypeEnum.PPT.getName( );
-        } else if (FileTypeEnum.DOC.getName( ).equalsIgnoreCase(suffix) || FileTypeEnum.DOCX.getName( ).equalsIgnoreCase(suffix)) {
-            type = FileTypeEnum.DOC.getName( );
-        } else if (FileTypeEnum.XLS.getName( ).equalsIgnoreCase(suffix) || FileTypeEnum.XLSX.getName( ).equalsIgnoreCase(suffix)) {
-            type = FileTypeEnum.XLS.getName( );
-        } else if (FileTypeEnum.PDF.getName( ).equalsIgnoreCase(suffix)) {
-            type = FileTypeEnum.PDF.getName( );
-        } else if (FileTypeEnum.HTML.getName( ).equalsIgnoreCase(suffix) || FileTypeEnum.HTM.getName( ).equalsIgnoreCase(suffix)) {
-            type = FileTypeEnum.HTM.getName( );
-        } else if (FileTypeEnum.TXT.getName( ).equalsIgnoreCase(suffix)) {
-            type = FileTypeEnum.TXT.getName( );
-        } else if (FileTypeEnum.MD.getName( ).equalsIgnoreCase(suffix)) {
-            type = FileTypeEnum.MD.getName( );
-        } else if (FileTypeEnum.SWF.getName( ).equalsIgnoreCase(suffix)) {
-            type = FileTypeEnum.FLASH.getName( );
-        } else if (FileTypeEnum.ZIP.getName( ).equalsIgnoreCase(suffix) || FileTypeEnum.RAR.getName( ).equalsIgnoreCase(suffix) || FileTypeEnum.SEVENZ.getName( ).equalsIgnoreCase(suffix)) {
-            type = FileTypeEnum.ZIP.getName( );
-        } else if (contentType != null && contentType.startsWith(FileTypeEnum.AUDIO.getName( ) + SLASH)) {
-            type = FileTypeEnum.MP3.getName( );
-        } else if (contentType != null && contentType.startsWith(FileTypeEnum.VIDEO.getName( ) + SLASH)) {
-            type = FileTypeEnum.MP4.getName( );
-        } else {
-            type = FileTypeEnum.FILE.getName( );
-        }
-        return type;
-    }
 
     /**
      * 封装返回结果
@@ -677,7 +580,7 @@ public class FileService {
      * @param msg
      * @return Map
      */
-    private Map getRS(int code, String msg) {
+    public Map getRS(int code, String msg) {
         return getRS(code, msg, null);
     }
 
@@ -697,11 +600,12 @@ public class FileService {
 
     /**
      * 拿到文本文件的文字内容，非文本文件返回null
+     *
      * @param map
      * @param p
      * @return
      */
-    public HashMap<String, Object> getContextString(HashMap<String, Object> map,String p){
+    public HashMap<String, Object> getContextString(HashMap<String, Object> map, String p) {
         String[] slist = p.split("/");
         LinkedList<String> dlist = new LinkedList<>( );
 
@@ -717,13 +621,45 @@ public class FileService {
 
 
         map.put("title", fileInfo.getFileName( ));
-        map.put("type",type);
-        map.put("updateTime",fileInfo.getLastModified());
+        map.put("type", type);
+        map.put("updateTime", fileInfo.getLastModified( ));
         //由于Jquery在获取字符串的时候会自动吧反斜杠过滤，因此需要替换一下
-        map.put("path",fileInfo.getAbsolutePath().replace('\\','/'));
+        map.put("path", fileInfo.getAbsolutePath( ).replace('\\', '/'));
         map.put("content", fileContent(fileInfo.getAbsolutePath( ), false));
-        System.out.println(map.get("path") );
-//        System.out.println(map.get("content") );
+        //System.out.println(map.get("path") );
+        //System.out.println(map.get("content") );
         return map;
+    }
+
+    /**
+     * 保存文本文件
+     *
+     * @param path
+     * @param updateTime
+     * @param content
+     * @return
+     */
+    public boolean saveFile(String path, long updateTime, String content) {
+        File f = new File(path);
+        boolean flag = false;
+
+
+        //文件存在+最后修改时间相等（不等=被改过=》不能修改）
+        if (f.exists( ) && updateTime == f.lastModified( )) {
+            System.out.println("aaaaaaaaaaa");
+            //保存文件的逻辑
+            FileIOUtil.write(path, content);
+            LinkedList<String> flist = new LinkedList<>( );
+            int length = FileTree.fileInfo.getAbsolutePath( ).replace('\\', '/').split("/").length;
+            String[] slist = path.split("/");
+            for (int index = length; index < slist.length; index++
+                    ) {
+                flist.add(slist[index]);
+            }
+            FileInfo fileInfo = FileTree.fileInfo.findChildFiles(flist);
+            fileInfo.setLastModified(f.lastModified( ));
+            flag = true;
+        }
+        return flag;
     }
 }

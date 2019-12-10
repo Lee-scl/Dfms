@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.docker.mapper.UserMapper">
+
+
+
+    <!--public User selUser(String username);-->
+    <select id="selUser" resultMap="User">
+        SELECT * FROM login_info
+        <where>
+                username=#{username}
+        </where>
+    </select>
+
+    <resultMap id="User" type="com.docker.entity.User">
+        <id column="username" property="username"></id>
+        <result column="password" property="password"></result>
+        <result column="rank" property="rank"></result>
+    </resultMap>
+
+</mapper>

@@ -14,7 +14,7 @@
 <div class="header">
     <div class="layui-container">
         <div class="layui-logo">
-            <img src="assets/images/logo.png"/><cite><span><a href="/">File Management System</a></span></cite>
+            <img src="assets/images/logo.png"/><cite><span><a href="/">Docker's FMS</a></span></cite>
         </div>
     </div>
 </div>
@@ -32,6 +32,9 @@
                 </button>
                 <button id="btnNewDir" class="layui-btn layui-btn-sm layui-btn-normal icon-btn"><i
                         class="layui-icon layui-icon-add-circle"></i>新建文件夹
+                </button>
+                <button id="btnNewFile" class="layui-btn layui-btn-sm layui-btn-normal icon-btn"><i
+                        class="layui-icon layui-icon-add-1"></i>新建文件
                 </button>
                 <button id="btnDelDir" class="layui-btn layui-btn-sm layui-btn-primary icon-btn"><i
                         class="layui-icon layui-icon-delete"></i>刪除目录
@@ -242,7 +245,7 @@
             var fullName = mUrl.substr(7);
             console.log(fullName);
             var type = fullName.split(".")[1];
-            if (type== "txt" || type=="md") {
+            if (type== "txt" || type=="md"|| type=="c"|| type=="java"|| type=="xml"|| type=="py") {
                 window.open("/mark/read?p=" + fullName + "&d=0", '_blank');
             }
             else {
@@ -394,7 +397,30 @@
                 layer.close(index);
             });
         });
-
+        // 新建文件
+        $('#btnNewFile').click(function () {
+            layer.prompt({
+                formType: 0,
+                value: "新建文件.txt",
+                title: '文件名'
+            }, function (value, index, elem) {
+                var curPos = $('#tvFP').text();
+                layer.load(2);
+                $.get(baseServer + 'api/mkdirFile', {
+                    curPos: curPos,
+                    FileName: value
+                }, function (res) {
+                    layer.closeAll('loading');
+                    if (res.code == 200) {
+                        layer.msg(res.msg, {icon: 1});
+                        renderList();
+                    } else {
+                        layer.msg(res.msg, {icon: 2});
+                    }
+                });
+                layer.close(index);
+            });
+        });
         // 删除当前目录
         $('#btnDelDir').click(function () {
             layer.confirm('将删除此目录下所有文件', {icon: 3, title: '确认'}, function (index) {

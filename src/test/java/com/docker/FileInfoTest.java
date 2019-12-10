@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.File;
 import java.util.LinkedList;
 
 /**
@@ -28,5 +29,10 @@ public class FileInfoTest {
         FileInfo info = FileTree.fileInfo.findChildFiles(dir);
         System.out.println(info.getFileName( ));
     }
+    @org.junit.Test
+    public void testFile() {
 
+        File file = new File("C:/Users/YBJB/Desktop/操作系统");
+        System.out.println(file.isDirectory() );
+    }
 }

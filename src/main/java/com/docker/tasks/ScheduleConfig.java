@@ -51,7 +51,7 @@ public class ScheduleConfig implements SchedulingConfigurer {
 
 
     /**
-     * 三分钟更新树一次，以防其他方式更改
+            * 三分钟更新树一次，以防其他方式更改
      * 更新时间问题有待解决
      */
     @Scheduled(cron = "0 0/3 * * * ?")

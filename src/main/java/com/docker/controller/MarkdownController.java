@@ -54,31 +54,6 @@ public class MarkdownController {
                         @RequestParam(value = "type", required = false) String type,
                         @RequestParam(value = "updateTime", required = false) long updateTime,
                         @RequestParam(value = "content", required = false) String content) {
-
-        System.out.println("title=========================" + title);
-        System.out.println("path=========================" + path);
-        File f = new File(path);
-        boolean flag = false;
-
-
-        //文件存在+最后修改时间相等（不等=被改过=》不能修改）
-        if (f.exists()&&updateTime==f.lastModified()){
-            System.out.println("aaaaaaaaaaa");
-            //保存文件的逻辑
-            FileIOUtil.write(path,content);
-            LinkedList<String> flist = new LinkedList<>( );
-            int length = FileTree.fileInfo.getAbsolutePath( ).replace('\\', '/').split("/").length;
-            String[] slist = path.split("/");
-            for (int index = length; index < slist.length; index++
-                    ) {
-                flist.add(slist[index]);
-            }
-            FileInfo fileInfo = FileTree.fileInfo.findChildFiles(flist);
-            fileInfo.setLastModified(f.lastModified());
-            flag = true;
-        }
-        return flag;
+        return fileService.saveFile(path,updateTime,content);
     }
-
-
 }

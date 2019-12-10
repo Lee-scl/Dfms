@@ -5,6 +5,7 @@ import com.docker.constant.FileTypeEnum;
 import com.docker.entity.FileInfo;
 import com.docker.entity.User;
 import com.docker.service.FileService;
+import com.docker.service.UserService;
 import com.docker.tasks.FileTree;
 import com.docker.util.CacheUtil;
 import com.docker.util.FileTypeUtil;
@@ -18,6 +19,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.standard.expression.Each;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -32,7 +34,7 @@ import java.util.*;
  */
 @Slf4j
 @CrossOrigin
-@Controller("ffff")
+@Controller
 public class FileController {
 
     private static final String SLASH = "/";
@@ -46,43 +48,6 @@ public class FileController {
     @Value("${fs.useSm}")
     private Boolean useSm;
 
-
-    //改成从数据库取
-    @Value("${admin.uname}")
-    private String uname;
-
-    @Value("${admin.pwd}")
-    private String pwd;
-
-
-
-
-    /**
-     * 登录页
-     *
-     * @return
-     */
-    @RequestMapping("/login")
-    public String loginPage() {
-        return "login.html";
-    }
-
-    /**
-     * 登录提交认证
-     *
-     * @param user
-     * @param session
-     * @return
-     */
-    @PostMapping("/auth")
-    public String auth(User user, HttpSession session) {
-        //此处可以加上登陆逻辑
-        if (user.getUname( ).equals(uname) && user.getPwd( ).equals(pwd)) {
-            session.setAttribute("LOGIN_USER", user);
-            return "redirect:/";
-        }
-        return "redirect:/login";
-    }
 
     /**
      * 首页
@@ -110,8 +75,6 @@ public class FileController {
     }
 
 
-
-
     /**
      * 查看/下载源文件
      *
@@ -129,36 +92,6 @@ public class FileController {
     }
 
 
-
-    /**
-     * 查看/下载分享的源文件
-     *
-     * @param sid      分享sid
-     * @param response
-     * @return
-     */
-    @GetMapping("/share/file")
-    public String shareFile(@RequestParam(value = "sid", required = true) String sid,
-                            @RequestParam(value = "d", required = true) int d,
-                            HttpServletResponse response,
-                            ModelMap modelMap) {
-        return fileService.returnShareFileOrSm(sid, d == 1 ? true : false, modelMap, response);
-    }
-
-    /**
-     * 分享源文件的缩略图
-     *
-     * @param sid      分享sid
-     * @param response
-     * @return
-     */
-    @GetMapping("/share/file/sm")
-    public String shareFileSm(@RequestParam(value = "sid", required = true) String sid,
-                              HttpServletResponse response,
-                              ModelMap modelMap) {
-        return fileService.returnShareFileOrSm(sid, false, modelMap, response);
-    }
-
     /**
      * 查看缩略图
      *
@@ -173,8 +106,6 @@ public class FileController {
     }
 
 
-
-
     /**
      * 获取全部文件、文件列表
      *
@@ -187,9 +118,8 @@ public class FileController {
     @ResponseBody
     @RequestMapping("/api/list")
     public Map list(String dir, String accept, String exts) {
-        return fileService.list(dir,accept,exts);
+        return fileService.list(dir, accept, exts);
     }
-
 
 
     /**
@@ -220,8 +150,6 @@ public class FileController {
     }
 
 
-
-
     /**
      * 新建文件夹
      *
@@ -236,6 +164,16 @@ public class FileController {
         return fileService.mkdir(curPos, dirName);
     }
 
+    @Login
+    @ResponseBody
+    @RequestMapping("/api/mkdirFile")
+    public Map mkdirFile(String curPos, String FileName) {
+
+        if (!FileTypeUtil.getFileType(FileName.split("\\.")[1] ,null).equals("file")){
+            return  fileService.mkdir(curPos,FileName);
+        }
+        return  fileService.getRS(500, "无法创建该类型");
+    }
     /**
      * 分享文件
      *
@@ -250,16 +188,5 @@ public class FileController {
         return fileService.share(file, time);
     }
 
-    /**
-     * 分享文件展示页面
-     *
-     * @param sid      分享文件sid
-     * @param modelMap
-     * @return
-     */
-    @GetMapping("/share")
-    public String sharePage(@RequestParam(value = "sid", required = true) String sid, ModelMap modelMap) {
-        return fileService.sharePage(sid,modelMap);
-    }
 
 }

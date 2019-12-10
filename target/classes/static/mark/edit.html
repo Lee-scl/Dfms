@@ -7,21 +7,25 @@
     <link rel="stylesheet" href="css/editormd.css"/>
     <link rel="shortcut icon" href="../assets/images/logo.png" type="image/x-icon"/>
 </head>
-<body>
-<div id="layout" style="background-color: HighlightText">
+<body style="background-color: HighlightText">
+<div id="layout">
     <header>
-        <div class="row">
-            <h1 th:text="${title}+${updateTime}+${type}" style="color: lightcyan"></h1>
-            <button id="save" type="button" class="btn btn-primary" style="color: white ;background-color: #1C005A">
+        <div class="btns">
+            <button style="color: dimgrey;background-color: #0a001f"><h1 th:text="${title}"
+                                                                         style="color: lightcyan"></h1></button>
+            <button id="save" type="button" class="btn" style="color: white ;background-color: #1C005A">
                 保存修改
+            </button>
+            <button id="watch-btn" type="button" class="btn" style="color: white ;background-color: #1C005A">Enable
+                watch
+            </button>
+            <button id="unwatch-btn" type="button" class="btn" style="color: white ;background-color: #1C005A">Disable
+                watch
             </button>
         </div>
     </header>
     <div id="test-editormd">
-
-
-
-                <textarea id ="txtarea" style="display:none;" th:text="${content}">[TOC]
+                <textarea id="txtarea" style="display:none;height:100%" th:text="${content}">[TOC]
 
 #### Disabled options
 
@@ -64,15 +68,9 @@
     var testEditor;
     $(function () {
         testEditor = editormd("test-editormd", {
-//            width: "100%",
-//            height: 750,
-//            syncScrolling: "single",
-//            path: "lib/",
-//            imageUpload: true,
-//            imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
-//            imageUploadURL: "imageUpload",
             width: "100%",
-            height: "100%",
+            height: 750,
+            autoHeight: true,
             path: 'lib/',
             theme: "dark",
             previewTheme: "dark",
@@ -114,24 +112,35 @@
     });
 
 
+    $("#watch-btn").click(function () {
+        testEditor.watch();
+    });
+
+    $("#unwatch-btn").click(function () {
+        testEditor.unwatch();
+    });
+
     $('#save').click(function () {
         $.post("http://localhost:8081/mark/save",
             {
                 title: '[[${title}]]',
                 type: '[[${type}]]',
-                updateTime:'[[${updateTime}]]',
-                path:'[[${path}]]',
-                content:$("#txtarea").text()
+                updateTime: '[[${updateTime}]]',
+                path: '[[${path}]]',
+                content: $("#txtarea").text()
             },
             function (data, status) {
-            if(status="success"){
-            if (data){
-                alert("保存成功");
-                }else {
-                alert("保存失败，文件已修改，请重新更新后修改");
-            }}
+                if (status = "success") {
+                    if (data) {
+                        alert("保存成功");
+                    } else {
+                        alert("保存失败，文件已修改，请重新更新后修改");
+                    }
+                }
             });
     });
+
+
 </script>
 </body>
 </html>

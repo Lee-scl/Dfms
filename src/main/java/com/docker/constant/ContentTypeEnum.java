@@ -13,10 +13,14 @@ public enum ContentTypeEnum {
     APPLICATION_PDF("application/pdf"),
 
     /**
-     * 文本文件,md
+     * 文本文件,可以文本打开的文件
      */
     TXT_PLAIN("text/plain"),
     TXT_MD("text/x-web-markdown"),
+    TXT_PY("text/troff"),
+    TXT_XML("application/xml"),
+    TXT_JAVA("text/x-java-source"),
+    TXT_C("text/x-csrc"),
     /**
      * 图片
      */

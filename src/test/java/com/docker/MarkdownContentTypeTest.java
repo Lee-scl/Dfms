@@ -27,6 +27,10 @@ public class MarkdownContentTypeTest {
 
     try {
         System.out.println(new Tika( ).detect(new File("C:\\Users\\YBJB\\Desktop\\安全帽\\待阅资料_CH.md")));
+        System.out.println(new Tika( ).detect(new File("C:\\Users\\YBJB\\Desktop\\操作系统\\ServerManagement\\index.py")));
+        System.out.println(new Tika( ).detect(new File("C:\\Users\\YBJB\\Desktop\\操作系统\\Dfms\\pom.xml")));
+        System.out.println(new Tika( ).detect(new File("C:\\Users\\YBJB\\Desktop\\操作系统\\Dfms\\src\\main\\java\\com\\docker\\FmsApplication.java")));
+        System.out.println(new Tika( ).detect(new File("D:\\桌面文件存放\\学习\\大三\\编译原理\\yacc\\parse_yacc\\main.c")));
 
     }catch (Exception e){
 
