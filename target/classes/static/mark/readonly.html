@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>Read only mode - Editor.md examples</title>
+    <link rel="stylesheet" href="css/style.css"/>
+    <link rel="stylesheet" href="css/editormd.css"/>
+    <link rel="shortcut icon" href="../assets/images/logo.png" type="image/x-icon"/>
+</head>
+<body bgcolor="#CCFFCC">
+<div id="layout">
+    <header>
+        <h1 th:text="${title}">只读模式</h1>
+    </header>
+    <div class="btns">
+        <button id="watch-btn">Enable watch</button>
+        <button id="unwatch-btn">Disable watch</button>
+    </div>
+    <div id="test-editormd" class="editormd-onlyread">
+                <textarea id="content" style="display:none;" th:text="${content}">#### Setting
+
+```javascript
+{
+    readOnly        : true,
+    //styleActiveLine : false,       // disable active line
+    //watch           : false,       // disable watch
+    //lineNumbers     : false        // hide line numbers
+}
+```
+</textarea>
+    </div>
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="js/editormd.js"></script>
+<script type="text/javascript">
+    var testEditor;
+
+    $(function () {
+        testEditor = editormd("test-editormd", {
+            width: "100%",
+            height: "100%",
+            path: "lib/",
+//            theme: "dark",
+//            previewTheme: "dark",
+//            editorTheme: "pastel-on-dark",
+            //watch           : false,           // disable watch
+            readOnly: true,
+            styleActiveLine: false,   // disable active line
+            //lineNumbers     : false      // hide line numbers
+        });
+
+        $("#watch-btn").click(function () {
+            testEditor.watch();
+        });
+
+        $("#unwatch-btn").click(function () {
+            testEditor.unwatch();
+        });
+    });
+</script>
+</body>
+</html>
