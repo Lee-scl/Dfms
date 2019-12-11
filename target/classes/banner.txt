@@ -1,0 +1,33 @@
+${AnsiColor.BRIGHT_CYAN}
+
+                                                                                .JUUUUUJ
+                                                                                 UpkImYC
+                                                                                 UpbXcUC
+                                                                       XUUUUUUUUIQbzmccJ.             ${AnsiColor.BLUE}UccnU$'${AnsiColor.CYAN}
+                                                                       Jb**kUJcYqqkoXpJJ.           ${AnsiColor.BLUE}UccnU$.JXC${AnsiColor.CYAN}
+                                                                       Jd*okJJzYqpaoYdUJ            ${AnsiColor.BLUE}UccnU${AnsiColor.CYAN}
+                                                                  .... Ck*ohUUzIqpkaYdYC.....      ${AnsiColor.BLUE}.JzzzzX${AnsiColor.CYAN}
+                                                                 ikdaqaCzpwvYophbaqwdzdUdkdkC       ${AnsiColor.BLUE}JczzzJJIoULQ${AnsiColor.CYAN}
+                                                                 ikhUpUCmahwJCdYkkpkXcUJdIakC      ${AnsiColor.BLUE}.+aczqppppppJ'${AnsiColor.CYAN}
+                                                                 ikkXpUCmokwJCdYkhpkXcUJdIahC      ${AnsiColor.BLUE}.oJvdppppqJU.${AnsiColor.CYAN}
+                                                             YJJUJUUUJUYJJYJJCJJUUCJJJJJUUJJCJUJJXz${AnsiColor.BLUE}vzzqdCId'.${AnsiColor.CYAN}
+                                                         ,   Jppzzzzzzzzzzzzzvzzzzzzzzzczzzzzzzzzz${AnsiColor.BLUE}zmpppC .
+                                                        hYCJrJdkUYJJazccvzdJUCCCozvvzbCCJUCqzcvcmkCLJUC^`_QYLL
+                                                             CaakbbbbkbbkkkbbbbbkkkkkbbbbbbkkbkkaaaaaL.
+                                                             'UaabkkkkkkkkkkkkkkkkkkkkkkkkkkkhaaaaaaJ`
+                                                              JaaakkkkkkkkoJJhkkkkkkkkkkkkkaaaaaaaYI
+                                                               Y*aaakbkaJJhkkkkkkkkkkkkhaaaaaaaaoJ
+                                                              . wpiiii",":kkkkkkkkkaaaaaaaaaaa*J "
+                                                                 'ICililli;naaaaaaaaaaaaaaaYJl
+                                                                    'CQ;llii;waaaaaaaaaJJY   .
+                                                                        .xLCYJUJJCCp^  ..
+${AnsiColor.RED}
+                                                                                                                (        *      (
+                                             (       (                                )      )    (           )\ )   (  `     )\ )
+                                             )\      )\   (    (              (    ( /(   ( /(    )\         (()/(   )\))(   (()/(
+                                          ((((_)(   ((_)  )\   )\ )    (     ))\   )\())  )\())  ((_)  (      /(_)) ((_)()\   /(_))
+                                           )\ _ )\   _   ((_) (()/(    )\   /((_) (_))/  ((_)\         )\    (_))_| (_()((_) (_))${AnsiColor.BRIGHT_RED}
+                                           (_)_\(_) | |   (_)  )(_))  ((_) (_))(  | |_   | |(_)       ((_)   | |_   |  \/  | / __|
+                                            / _ \   | |   | | | || | / _ \ | || | |  _|  | ' \        (_-<   | __|  | |\/| | \__ \${AnsiColor.BRIGHT_YELLOW}
+                                           /_/ \_\  |_|   |_|  \_, | \___/  \_,_|  \__|  |_||_|       /__/   |_|    |_|  |_| |___/
+                                                               |__/
